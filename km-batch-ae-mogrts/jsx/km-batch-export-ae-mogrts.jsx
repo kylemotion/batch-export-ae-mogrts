@@ -116,6 +116,7 @@
           try{
               // alert("Exporting Mogrt for: " + comp.name);
             app.beginSuppressDialogs();
+              comp.motionGraphicsTemplateName = comp.name;
               comp.exportAsMotionGraphicsTemplate(true,destination);
               // alert("Export successful");
             app.endSuppressDialogs(true);
@@ -129,7 +130,9 @@
 
       }
 
-      alert("Finished!\rExported " +compNames.length + "/"+ compNames.length + " Mogrts to\r\r" + destination)
+      alert("Finished!\rExported " +compNames.length + "/"+ compNames.length + " Mogrts to\r\r" + destination);
+      var destinationFolder = new Folder(destination);
+      destinationFolder.execute();
       return 
       
     }
