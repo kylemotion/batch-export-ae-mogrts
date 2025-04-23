@@ -2,7 +2,7 @@
 
 ## About
 
-km-batch-ae-mogrts will export mogrts from your selected comps in your project panel. Upon launching the script you will be prompted to choose a location for your exported mogrts. Once you've selected a folder destination, then the script will run and export your mogrts. Your mogrts will be named based on your comp names. Upon finishing exporting, you will see a dialog box showing you the location of your mogrts along with how many were exported.
+km-batch-ae-mogrts will export mogrts from your selected comps in your project panel. Upon launching the script you will be prompted to choose a location for your exported mogrts. Once you've selected a folder destination, then the script will run and export your mogrts. Your mogrts will be named based on your comp names. Upon finishing exporting, you will see a dialog box showing you the location of your mogrts along with how many were exported. Once you click okay on that dialog box your system folder destination will reveal itself.
 
 ## Installation
 
