@@ -21,11 +21,16 @@
     try {
         app.beginUndoGroup("batch export mogrts to selected folder");
         var curProj = getProj();
-        var selComps = getSelCompNames(curProj);
-        if(!selComps) return;
+        var selCompIds = getSelCompIds(curProj);
+        if(!selCompIds) return;
         var mogrtDest = mogrtDestination();
   
-        exportMogrts(selComps, curProj,mogrtDest);
+        if (!curProj.file) {
+          var cmdId = app.findMenuCommandId('Save');
+          app.executeCommand(cmdId);
+        }
+
+        exportMogrts(selCompIds, curProj,mogrtDest);
        
 
       } catch(error) {
@@ -49,7 +54,7 @@
       return proj
     }
     
-    function getSelCompNames(proj){
+    function getSelCompIds(proj){
       var selItems = proj.selection;
 
       if(selItems.length < 1){
@@ -67,7 +72,7 @@
         var item = selItems[i];
         if(item instanceof CompItem && item.motionGraphicsTemplateControllerCount > 0){
           found = true;
-          selComps.push(item.name);
+          selComps.push(item.id);
         }
       }
 
@@ -91,34 +96,31 @@
     }
     
 
-    function exportMogrts(compNames, proj,destination) {
-      if (!compNames || !destination) return;
-    
-      if (!proj.file) {
-        var cmdId = app.findMenuCommandId('Save');
-        proj.executeCommand(cmdId);
-      }
+    function exportMogrts(compIds, proj,destination) {
+      if (!compIds || !destination) return;
       
+      var compsExported = 0;
       
-      for(var i=0; i<compNames.length; i++){ 
-        var currentCompName = compNames[i];
+      for(var i=0; i<compIds.length; i++){ 
+        var currentCompId = compIds[i];
         var comp = null;
 
         for(var j = 1; j<=app.project.numItems;j++){
           var item = app.project.item(j);
-          if(item instanceof CompItem && item.name === currentCompName){
+          if(item instanceof CompItem && item.id === currentCompId){
             comp = item;
+            comp.motionGraphicsTemplateName = comp.name;
             break
           }
         }
         
         if(comp){
           try{
-              // alert("Exporting Mogrt for: " + comp.name);
+              
             app.beginSuppressDialogs();
-              comp.motionGraphicsTemplateName = comp.name;
               comp.exportAsMotionGraphicsTemplate(true,destination);
-              // alert("Export successful");
+              compsExported++
+              
             app.endSuppressDialogs(true);
               continue;
           } catch (err) {
@@ -127,10 +129,10 @@
         } else {
           alert("Couldn't refind comp: " + comp);
         }
-
+e
       }
 
-      alert("Finished!\rExported " +compNames.length + "/"+ compNames.length + " Mogrts to\r\r" + destination);
+      alert("Finished!\rExported " +compsExported + "/"+ compIds.length + " Mogrts to\r\r" + destination);
       var destinationFolder = new Folder(destination);
       destinationFolder.execute();
       return 
