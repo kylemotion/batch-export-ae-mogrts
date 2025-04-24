@@ -1,4 +1,4 @@
-# Batch Export Mogrts
+# Batch Export Comps To Mogrts
 
 ## About
 
