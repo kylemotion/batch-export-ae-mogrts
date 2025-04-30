@@ -33,7 +33,7 @@ Preferences
 
 ## Step 1
 
-Select compositions in the project panel.
+Select compositions in the project panel or open 1 composition to export current composition.
 
 ## Step 2
 
@@ -47,4 +47,9 @@ Choose the folder destination.
 
 Mogrts exported to your destination of choice!
 
-![til](./km-batch-ae-mogrts/reference/km_batch_export_comps_to_mogrts.gif)
+![til](./km-batch-ae-mogrts/reference/km_batch_export_comps_to_mogrts.gif);
+
+## Known Issues
+
+Script will skip mogrts in batch when total amount selected exceeds 15.
+There is no current indicator for which mogrt is currently being exported. A progress bar will be implemented in the future.
