@@ -19,18 +19,19 @@
 (function(){
 
     try {
-        app.beginUndoGroup("batch export mogrts to selected folder");
-        var curProj = getProj();
-        var selCompIds = getSelCompIds(curProj);
-        if(!selCompIds) return;
-        var mogrtDest = mogrtDestination();
-  
-        if (!curProj.file) {
-          var cmdId = app.findMenuCommandId('Save');
-          app.executeCommand(cmdId);
-        }
-
-        exportMogrts(selCompIds, curProj,mogrtDest);
+      app.beginUndoGroup("batch export mogrts to selected folder");
+      var curProj = getProj();
+      var selcompIDs = getSelcompIDs(curProj);
+      if(!selcompIDs) return;
+      var mogrtDest = mogrtDestination();
+      
+      if (!curProj.file) {
+        var cmdId = app.findMenuCommandId('Save');
+        app.executeCommand(cmdId);
+      }
+      app.beginSuppressDialogs();
+      exportMogrts(selcompIDs, curProj,mogrtDest);
+      app.endSuppressDialogs(true);
        
 
       } catch(error) {
@@ -54,27 +55,28 @@
       return proj
     }
     
-    function getSelCompIds(proj){
+    function getSelcompIDs(proj){
       var selItems = proj.selection;
 
-      if(selItems.length < 1){
-        alert("Whoops!\rYou don't have any items selected. Select at least one item in the project panel and try again.");
-        return
-      }
-
-
-
       var selComps = [];
-
+      
       var found = false;
 
-      for(var i = 0; i<selItems.length; i++){
-        var item = selItems[i];
-        if(item instanceof CompItem && item.motionGraphicsTemplateControllerCount > 0){
+      if(selItems.length < 1){
+        var activeComp = proj.activeItem;
+        if(activeComp && activeComp instanceof CompItem && activeComp.motionGraphicsTemplateControllerCount > 0){
           found = true;
-          selComps.push(item.id);
+          selComps.push(activeComp.id);
         }
-      }
+      } else {
+        for(var i = 0; i<selItems.length; i++){
+          var item = selItems[i];
+          if(item instanceof CompItem && item.motionGraphicsTemplateControllerCount > 0){
+            found = true;
+            selComps.push(item.id);
+          }
+        }
+    }
 
       if(!found){
         alert("Whoops!\rYou don't have any comp items selected. Select atleast 1 comp item and try again.");
@@ -94,45 +96,37 @@
       }
       return folderPath.fsName
     }
-    
 
-    function exportMogrts(compIds, proj,destination) {
-      if (!compIds || !destination) return;
+    function exportMogrts(compIDs, proj,destination) {
+      if (!compIDs || !destination) return;
       
       var compsExported = 0;
       
-      for(var i=0; i<compIds.length; i++){ 
-        var currentCompId = compIds[i];
+      for(var i=0; i<compIDs.length; i++){ 
+        var currentCompId = compIDs[i];
         var comp = null;
-
         for(var j = 1; j<=app.project.numItems;j++){
           var item = app.project.item(j);
           if(item instanceof CompItem && item.id === currentCompId){
             comp = item;
-            comp.motionGraphicsTemplateName = comp.name;
-            break
+            break;
           }
         }
-        
         if(comp){
-          try{
-              
-            app.beginSuppressDialogs();
-              comp.exportAsMotionGraphicsTemplate(true,destination);
-              compsExported++
-              
-            app.endSuppressDialogs(true);
-              continue;
+          try{     
+          comp.openInEssentialGraphics();
+          comp.motionGraphicsTemplateName = comp.name
+           var exportComp = comp.exportAsMotionGraphicsTemplate(true,destination);
+           compsExported++
           } catch (err) {
             alert("Failed exporting: " + comp.name + "\n" + err.toString());
           }
         } else {
-          alert("Couldn't refind comp: " + comp);
+          alert("Couldn't export mogrt for: " + comp.name);
         }
-e
       }
 
-      alert("Finished!\rExported " +compsExported + "/"+ compIds.length + " Mogrts to\r\r" + destination);
+      alert("Finished!\rExported " +compsExported + "/"+ compIDs.length + " Mogrts to\r\r" + destination);
       var destinationFolder = new Folder(destination);
       destinationFolder.execute();
       return 
