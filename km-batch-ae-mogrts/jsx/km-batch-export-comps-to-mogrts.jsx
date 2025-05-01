@@ -1,6 +1,6 @@
 /**
  * @description a headless script that will batch export mogrts based on selected comps in the project panel
- * @name km-scriptname
+ * @name km-batch-export-comps-to-mogrts.jsx
  * @author Kyle Harter <kylenmotion@gmail.com>
  * @version 1.0.0
  * 
