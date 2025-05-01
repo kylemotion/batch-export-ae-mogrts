@@ -51,5 +51,5 @@ Mogrts exported to your destination of choice!
 
 ## Known Issues
 
-Script will skip mogrts in batch when total amount selected exceeds 15.
+Incorrect logging of exported mogrts on final alert even though the correct amount of mogrts were exported.
 There is no current indicator for which mogrt is currently being exported. A progress bar will be implemented in the future.
